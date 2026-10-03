@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minibook — Feed</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/reactions.js"></script>
+  <script defer src="/js/ui.js"></script>
+  <script defer src="/js/feed.js"></script>
+</head>
+<body><header id="navbar"></header><main class="layout">
+  <section class="main-column">
+    <div class="page-heading feed-heading"><div><p class="eyebrow">YOUR COMMUNITY</p><h1>Home feed</h1></div><span class="feed-status">A little scroll, a little sunshine <span aria-hidden="true">✦</span></span></div>
+    <form id="post-form" class="panel composer">
+      <div class="composer-heading"><span class="composer-mark" aria-hidden="true">✳</span><div><strong>Share a moment</strong><span>What's new with you?</span></div></div>
+      <label for="post-content">What's happening?</label>
+      <textarea id="post-content" name="content" maxlength="2000" placeholder="Share a thought, a photo, or a moment…" rows="3"></textarea>
+      <div class="form-row">
+        <label class="file-label"><span class="file-picker-button">Add photo/video</span><span class="file-name" data-empty-label="Choose a photo or video">Choose a photo or video</span><input type="file" name="media" accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"></label>
+        <select class="visibility-select" name="visibility" aria-label="Post visibility"><option value="public">Public</option><option value="friends">Friends</option><option value="private">Only me</option></select>
+        <button class="button" type="submit">Share post</button>
+      </div>
+      <p class="message" aria-live="polite"></p>
+    </form>
+    <div id="feed" class="stack"></div>
+  </section>
+  <aside class="side-column">
+    <section class="panel welcome-card"><p class="eyebrow">A LITTLE MORE SOCIAL</p><h2>Good things happen when we keep in touch.</h2><p>Find your people, share a moment, and follow along.</p><a class="text-link" href="/search.html">Discover people <span aria-hidden="true">→</span></a></section>
+    <section class="panel explore-card"><div class="explore-heading"><span class="eyebrow">YOUR SHORTCUTS</span><span aria-hidden="true">✦</span></div><a href="/friends.html"><span class="shortcut-icon">♡</span><span><strong>Friends</strong><small>Catch up with your circle</small></span><span class="shortcut-arrow">→</span></a><a href="/search.html"><span class="shortcut-icon">⌕</span><span><strong>Discover</strong><small>Meet someone new</small></span><span class="shortcut-arrow">→</span></a><a href="/notifications.html"><span class="shortcut-icon">♧</span><span><strong>Notifications</strong><small>See what's happening</small></span><span class="shortcut-arrow">→</span></a></section>
+    <p class="sidebar-footnote">A thoughtful little corner of the internet.<br>Made for sharing the moments that matter.</p>
+  </aside>
+</main></body></html>

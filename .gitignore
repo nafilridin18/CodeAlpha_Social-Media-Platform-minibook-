@@ -1,0 +1,10 @@
+node_modules/
+database/social.db
+database/social.db-shm
+database/social.db-wal
+uploads/avatars/*
+uploads/posts/*
+uploads/covers/*
+!uploads/avatars/.gitkeep
+!uploads/posts/.gitkeep
+!uploads/covers/.gitkeep

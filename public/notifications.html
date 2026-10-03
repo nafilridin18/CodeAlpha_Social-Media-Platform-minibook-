@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications — Minibook</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/ui.js"></script>
+  <script defer src="/js/notifications.js"></script>
+</head>
+<body>
+  <header id="navbar"></header>
+  <main class="narrow">
+    <div class="page-heading notification-heading">
+      <div><p class="eyebrow">YOUR LITTLE UPDATES</p><h1>Notifications</h1></div>
+      <button id="read-all" class="button secondary" type="button">Mark all read</button>
+    </div>
+    <section id="notifications" class="notification-list" aria-live="polite"></section>
+  </main>
+</body>
+</html>

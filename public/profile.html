@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Profile — Minibook</title><script src="/js/theme.js"></script><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/theme.css"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/reactions.js"></script><script defer src="/js/ui.js"></script><script defer src="/js/profile.js"></script></head>
+<body><header id="navbar"></header><main class="layout"><section class="main-column">
+  <div id="profile" class="panel profile-card"><p>Loading profile…</p></div>
+  <h2 class="section-title">Posts &amp; shares</h2>
+  <div id="profile-posts" class="stack"></div>
+  <form id="profile-post-form" class="panel composer hidden">
+    <div class="composer-heading"><span class="composer-mark" aria-hidden="true">✳</span><div><strong>Share a moment</strong><span>Your friends would love an update.</span></div></div>
+    <label for="profile-post-content">What's happening?</label>
+    <textarea id="profile-post-content" name="content" maxlength="2000" placeholder="Share a thought, a photo, or a moment…" rows="3"></textarea>
+    <div class="form-row"><label class="file-label"><span class="file-picker-button">Add photo/video</span><span class="file-name" data-empty-label="Choose a photo or video">Choose a photo or video</span><input type="file" name="media" accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"></label><select class="visibility-select" name="visibility" aria-label="Post visibility"><option value="public">Public</option><option value="friends">Friends</option><option value="private">Only me</option></select><button class="button" type="submit">Share post</button></div>
+    <p class="message" aria-live="polite"></p>
+  </form>
+  <div class="profile-edit-backdrop hidden" id="profile-edit-backdrop">
+    <form id="edit-profile" class="panel profile-edit-dialog">
+      <div class="profile-form-heading"><div><p class="eyebrow">MAKE IT YOURS</p><h2>Edit profile</h2></div><button type="button" class="icon-button" data-close-profile-edit aria-label="Close profile editor">×</button></div>
+      <label>Display name<input name="display_name" maxlength="60" required></label>
+      <label>Bio<textarea name="bio" maxlength="280" rows="3" placeholder="A little about you…"></textarea></label>
+      <label class="file-picker"><span>Profile photo</span><span class="file-picker-row"><span class="file-picker-button">Choose photo</span><span class="file-name" data-empty-label="No photo selected">No photo selected</span></span><input name="avatar" type="file" accept="image/jpeg,image/png,image/gif,image/webp"></label>
+      <label class="file-picker"><span>Cover photo</span><span class="file-picker-row"><span class="file-picker-button">Choose cover</span><span class="file-name" data-empty-label="No cover selected">No cover selected</span></span><input name="cover" type="file" accept="image/jpeg,image/png,image/gif,image/webp"></label>
+      <button class="button" type="submit">Save profile</button><p class="message" aria-live="polite"></p>
+    </form>
+  </div>
+</section><aside class="side-column"><section class="panel"><h2>About Minibook</h2><p>Keep up with friends and share the little things.</p></section></aside></main></body></html>
