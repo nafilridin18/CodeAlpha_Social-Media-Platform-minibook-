@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Minibook
 
 Minibook is a small, self-hosted social-network starter built with Express, SQLite, and plain browser JavaScript. Social pages and data APIs require an account; visitors are redirected to sign in or create one first.
@@ -58,3 +59,6 @@ The default Express memory session store is only suitable for local development.
 - `GET|POST /api/posts/:postId/comments`
 - `GET|POST /api/reactions/:targetType/:targetId`
 - `GET /api/notifications`, `POST /api/notifications/read-all`, `POST /api/notifications/:notificationId/read`
+=======
+# CodeAlpha_Social-Media-Platform-minibook-
+>>>>>>> 944c53828334a4bae9fb450841b687e84cffbebe
