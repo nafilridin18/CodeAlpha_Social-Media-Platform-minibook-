@@ -46,6 +46,19 @@ window.refreshNotificationBadge = async function refreshNotificationBadge() {
   }
 };
 
+window.refreshMessageBadge = async function refreshMessageBadge() {
+  const badge = document.querySelector('[data-message-badge]');
+  if (!badge || !window.currentUser) return;
+  try {
+    const { unread_count: unreadCount } = await api('/api/messages/unread-count');
+    badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+    badge.classList.toggle('hidden', unreadCount === 0);
+    badge.setAttribute('aria-label', `${unreadCount} unread messages`);
+  } catch (error) {
+    console.error('Unable to refresh messages badge:', error);
+  }
+};
+
 function navItem(href, icon, label, active) {
   return `<a class="bottom-nav-item${active ? ' is-active' : ''}" href="${href}"${active ? ' aria-current="page"' : ''}>
     <span class="nav-icon" aria-hidden="true">${icon}</span><span class="nav-label">${label}</span>
@@ -63,6 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const icons = {
       feed: '<svg viewBox="0 0 24 24" fill="none"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V10Z"/></svg>',
       discover: '<svg viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 5 5M10.8 7v7.6M7 10.8h7.6"/></svg>',
+      messages: '<svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8.5Z"/></svg>',
       notifications: '<svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Zm-8 13h4"/></svg>',
       profile: '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
     };
@@ -73,10 +87,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       bottomNav.className = 'bottom-nav';
       bottomNav.setAttribute('aria-label', 'Main navigation');
       bottomNav.innerHTML = [
-        navItem(`/profile.html?u=${encodeURIComponent(user.username)}`, icons.profile, 'Profile', currentPath === '/profile.html'),
         navItem('/', icons.feed, 'Feed', currentPath === '/'),
-        navItem('/notifications.html', icons.notifications, 'Notifications<span class="notification-badge hidden" data-notification-badge></span>', currentPath === '/notifications.html'),
         navItem('/search.html', icons.discover, 'Find people', currentPath === '/search.html'),
+        navItem('/messages.html', icons.messages, 'Messages<span class="notification-badge hidden" data-message-badge></span>', currentPath === '/messages.html'),
+        navItem('/notifications.html', icons.notifications, 'Notifications<span class="notification-badge hidden" data-notification-badge></span>', currentPath === '/notifications.html'),
+        navItem(`/profile.html?u=${encodeURIComponent(user.username)}`, icons.profile, 'Profile', currentPath === '/profile.html'),
       ].join('');
       document.body.append(bottomNav);
       document.body.classList.add('has-bottom-nav');
@@ -87,10 +102,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.reload();
     });
     if (user) {
-      await window.refreshNotificationBadge();
-      window.setInterval(window.refreshNotificationBadge, 30000);
+      await Promise.all([
+        window.refreshNotificationBadge(),
+        window.refreshMessageBadge(),
+      ]);
+      window.setInterval(() => {
+        window.refreshNotificationBadge();
+        window.refreshMessageBadge();
+      }, 15000);
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) window.refreshNotificationBadge();
+        if (!document.hidden) {
+          window.refreshNotificationBadge();
+          window.refreshMessageBadge();
+        }
       });
     }
   } catch (error) {

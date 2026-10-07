@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
       }
       buttons.insertAdjacentHTML('beforeend', `<button class="button secondary" id="follow-action">${user.is_following ? 'Following' : 'Follow'}</button>`);
+      buttons.insertAdjacentHTML('beforeend', `<a class="button secondary" href="/messages.html?u=${encodeURIComponent(user.username)}">Message</a>`);
       buttons.querySelector('#follow-action').onclick = async (event) => {
         const following = user.is_following;
         await api(`/api/follows/${user.id}`, { method: following ? 'DELETE' : 'POST' });

@@ -5,6 +5,8 @@ database/social.db-wal
 uploads/avatars/*
 uploads/posts/*
 uploads/covers/*
+uploads/messages/*
 !uploads/avatars/.gitkeep
 !uploads/posts/.gitkeep
 !uploads/covers/.gitkeep
+!uploads/messages/.gitkeep

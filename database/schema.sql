@@ -1,98 +1,81 @@
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL UNIQUE,
+  username TEXT NOT NULL COLLATE NOCASE UNIQUE,
   password_hash TEXT NOT NULL,
   display_name TEXT NOT NULL,
-  bio TEXT,
+  bio TEXT NOT NULL DEFAULT '',
   avatar_path TEXT,
   cover_path TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS friendships (
-  user_low_id INTEGER NOT NULL,
-  user_high_id INTEGER NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  user_low_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_high_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (user_low_id, user_high_id),
-  FOREIGN KEY (user_low_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_high_id) REFERENCES users(id) ON DELETE CASCADE,
   CHECK (user_low_id < user_high_id)
 );
 
 CREATE TABLE IF NOT EXISTS friend_requests (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  requester_id INTEGER NOT NULL,
-  recipient_id INTEGER NOT NULL,
-  status TEXT CHECK(status IN ('pending', 'accepted', 'rejected')) NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE,
+  requester_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  recipient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   CHECK (requester_id != recipient_id),
   UNIQUE (requester_id, recipient_id)
 );
 
 CREATE TABLE IF NOT EXISTS follows (
-  follower_id INTEGER NOT NULL,
-  followed_id INTEGER NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  follower_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  followed_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (follower_id, followed_id),
-  FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (followed_id) REFERENCES users(id) ON DELETE CASCADE,
   CHECK (follower_id != followed_id)
 );
 
 CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
-  content TEXT,
+  author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL DEFAULT '',
   media_path TEXT,
-  media_type TEXT CHECK(media_type IN ('image', 'video')),
-  visibility TEXT CHECK(visibility IN ('public', 'friends', 'private')) NOT NULL DEFAULT 'public',
-  shared_post_id INTEGER,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (shared_post_id) REFERENCES posts(id) ON DELETE SET NULL,
-  CHECK (length(TRIM(COALESCE(content, ''))) > 0 OR media_path IS NOT NULL OR shared_post_id IS NOT NULL)
+  media_type TEXT CHECK (media_type IN ('image', 'video') OR media_type IS NULL),
+  visibility TEXT NOT NULL DEFAULT 'public' CHECK (visibility IN ('public', 'friends', 'private')),
+  shared_post_id INTEGER REFERENCES posts(id) ON DELETE SET NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  CHECK (length(trim(content)) > 0 OR media_path IS NOT NULL OR shared_post_id IS NOT NULL)
 );
 
 CREATE TABLE IF NOT EXISTS comments (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  post_id INTEGER NOT NULL,
-  user_id INTEGER NOT NULL,
-  parent_comment_id INTEGER,
-  body TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (parent_comment_id) REFERENCES comments(id) ON DELETE CASCADE,
-  CHECK (length(TRIM(body)) > 0)
+  post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  parent_comment_id INTEGER REFERENCES comments(id) ON DELETE CASCADE,
+  body TEXT NOT NULL CHECK (length(trim(body)) > 0),
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS reactions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  target_type TEXT CHECK(target_type IN ('post', 'comment')) NOT NULL,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  target_type TEXT NOT NULL CHECK (target_type IN ('post', 'comment')),
   target_id INTEGER NOT NULL,
-  reaction TEXT CHECK(reaction IN ('like', 'love', 'laugh', 'wow', 'sad', 'angry')) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  reaction TEXT NOT NULL CHECK (reaction IN ('like', 'love', 'laugh', 'wow', 'sad', 'angry')),
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE (user_id, target_type, target_id)
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  recipient_id INTEGER NOT NULL,
-  actor_id INTEGER NOT NULL,
-  type TEXT CHECK(type IN ('like', 'comment', 'share')) NOT NULL,
-  post_id INTEGER NOT NULL,
-  comment_id INTEGER,
-  is_read INTEGER NOT NULL DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-  FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE SET NULL,
+  recipient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  actor_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN ('like', 'comment', 'share')),
+  post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  comment_id INTEGER REFERENCES comments(id) ON DELETE SET NULL,
+  is_read INTEGER NOT NULL DEFAULT 0 CHECK (is_read IN (0, 1)),
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
   CHECK (recipient_id != actor_id)
 );
 
@@ -102,3 +85,20 @@ CREATE INDEX IF NOT EXISTS idx_friend_requests_recipient ON friend_requests(reci
 CREATE INDEX IF NOT EXISTS idx_follows_followed ON follows(followed_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_recipient_created ON notifications(recipient_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications(recipient_id, is_read);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  recipient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL DEFAULT '',
+  media_path TEXT,
+  media_type TEXT CHECK (media_type IN ('image', 'video') OR media_type IS NULL),
+  is_read INTEGER NOT NULL DEFAULT 0 CHECK (is_read IN (0, 1)),
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  CHECK (length(trim(content)) > 0 OR media_path IS NOT NULL),
+  CHECK (sender_id != recipient_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_messages_pair_created ON messages(sender_id, recipient_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_messages_recipient_unread ON messages(recipient_id, is_read);
+CREATE INDEX IF NOT EXISTS idx_messages_created ON messages(created_at);

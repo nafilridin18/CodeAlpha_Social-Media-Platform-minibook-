@@ -38,6 +38,7 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/auth', require('./routes/auth.routes'));
+app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.use('/api', (req, res, next) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Please log in to continue.' });
   next();
@@ -49,6 +50,7 @@ app.use('/api/posts', require('./routes/posts.routes'));
 app.use('/api', require('./routes/comments.routes'));
 app.use('/api', require('./routes/reactions.routes'));
 app.use('/api/notifications', require('./routes/notifications.routes'));
+app.use('/api/messages', require('./routes/messages.routes'));
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

@@ -6,15 +6,20 @@ const root = path.join(__dirname, '..', 'uploads');
 const avatarDirectory = path.join(root, 'avatars');
 const postDirectory = path.join(root, 'posts');
 const coverDirectory = path.join(root, 'covers');
+const messageDirectory = path.join(root, 'messages');
 fs.mkdirSync(avatarDirectory, { recursive: true });
 fs.mkdirSync(postDirectory, { recursive: true });
 fs.mkdirSync(coverDirectory, { recursive: true });
+fs.mkdirSync(messageDirectory, { recursive: true });
 
 const storage = multer.diskStorage({
   destination(req, file, callback) {
-    const directory = req.baseUrl === '/api/users'
-      ? file.fieldname === 'cover' ? coverDirectory : avatarDirectory
-      : postDirectory;
+    let directory = postDirectory;
+    if (req.baseUrl === '/api/users') {
+      directory = file.fieldname === 'cover' ? coverDirectory : avatarDirectory;
+    } else if (req.baseUrl === '/api/messages') {
+      directory = messageDirectory;
+    }
     callback(null, directory);
   },
   filename(req, file, callback) {
@@ -42,4 +47,5 @@ const uploader = multer({
 module.exports = {
   profileUpload: uploader.fields([{ name: 'avatar', maxCount: 1 }, { name: 'cover', maxCount: 1 }]),
   postUpload: uploader.single('media'),
+  messageUpload: uploader.single('media'),
 };

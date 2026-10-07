@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Messages — Minibook</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/ui.js"></script>
+  <script defer src="/js/messages.js"></script>
+</head>
+<body class="messages-page">
+  <header id="navbar"></header>
+
+  <main class="messenger-container">
+    <!-- Left Sidebar: Conversations -->
+    <aside class="messenger-sidebar" id="conversations-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title-row">
+          <h1>Messages</h1>
+          <button type="button" class="icon-button-circle" id="new-message-btn" title="New conversation" aria-label="Start new conversation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="conversation-search" placeholder="Search chats…" aria-label="Search conversations">
+        </div>
+      </div>
+
+      <div class="conversations-list" id="conversations-list" role="list">
+        <div class="loading-state">Loading chats…</div>
+      </div>
+    </aside>
+
+    <!-- Right Pane: Active Chat -->
+    <section class="messenger-chat" id="chat-pane">
+      <div class="chat-placeholder" id="chat-placeholder">
+        <div class="placeholder-content">
+          <div class="placeholder-icon">💬</div>
+          <h2>Your Messages</h2>
+          <p>Send photos, videos, emojis, and notes to your friends.</p>
+          <button type="button" class="button" id="start-chat-prompt-btn">Start a conversation</button>
+        </div>
+      </div>
+
+      <div class="chat-active hidden" id="chat-active">
+        <!-- Chat Header -->
+        <header class="chat-header">
+          <button type="button" class="back-to-sidebar-btn" id="back-to-conversations" aria-label="Back to conversations">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="partner-summary" id="partner-summary">
+            <!-- Populated dynamically -->
+          </div>
+          <div class="header-actions">
+            <a class="button secondary small-btn" id="view-profile-btn" href="#">View profile</a>
+          </div>
+        </header>
+
+        <!-- Messages Thread -->
+        <div class="chat-messages-container" id="chat-messages" tabindex="0" aria-label="Message history">
+          <!-- Messages inserted dynamically -->
+        </div>
+
+        <!-- Attachment Preview Bar -->
+        <div class="attachment-preview-bar hidden" id="attachment-preview-bar">
+          <div class="preview-media-wrapper" id="preview-media-wrapper"></div>
+          <div class="preview-info">
+            <span class="preview-name" id="preview-file-name"></span>
+            <span class="preview-size" id="preview-file-size"></span>
+          </div>
+          <button type="button" class="remove-attachment-btn" id="remove-attachment-btn" aria-label="Remove attachment" title="Remove attachment">×</button>
+        </div>
+
+        <!-- Emoji Picker Popover -->
+        <div class="emoji-picker-popover hidden" id="emoji-picker" role="dialog" aria-label="Emoji picker">
+          <div class="emoji-picker-header">
+            <span class="emoji-picker-title">Pick an emoji</span>
+            <button type="button" class="close-picker-btn" id="close-emoji-picker" aria-label="Close emoji picker">×</button>
+          </div>
+          <div class="emoji-tabs" id="emoji-tabs">
+            <button type="button" class="emoji-tab is-active" data-cat="smileys">😀 Smileys</button>
+            <button type="button" class="emoji-tab" data-cat="hearts">❤️ Love</button>
+            <button type="button" class="emoji-tab" data-cat="gestures">👍 Hands</button>
+            <button type="button" class="emoji-tab" data-cat="fun">🎉 Fun</button>
+            <button type="button" class="emoji-tab" data-cat="nature">🌿 Nature</button>
+          </div>
+          <div class="emoji-grid" id="emoji-grid"></div>
+        </div>
+
+        <!-- Composer Form -->
+        <form class="chat-composer" id="chat-composer">
+          <input type="file" id="media-file-input" name="media" class="hidden-input" accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime">
+          
+          <button type="button" class="composer-icon-btn" id="emoji-toggle-btn" title="Add emoji" aria-label="Choose emoji" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+
+          <button type="button" class="composer-icon-btn" id="attach-media-btn" title="Attach picture or video" aria-label="Attach photo or video">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+
+          <div class="input-wrap">
+            <textarea id="message-text-input" name="content" placeholder="Type a message… (Enter to send)" rows="1" maxlength="2000" aria-label="Message text"></textarea>
+          </div>
+
+          <button type="submit" class="composer-send-btn" id="send-message-btn" aria-label="Send message" title="Send message">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg>
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- New Conversation Dialog -->
+  <div class="dialog-backdrop hidden" id="new-conversation-dialog">
+    <div class="dialog-card">
+      <div class="dialog-header">
+        <h2>Start a conversation</h2>
+        <button type="button" class="close-picker-btn" id="close-new-conv-dialog" aria-label="Close dialog">×</button>
+      </div>
+      <div class="dialog-body">
+        <label for="new-conv-search">Find someone to message</label>
+        <input type="text" id="new-conv-search" placeholder="Type name or username…">
+        <div class="suggested-users-list" id="suggested-users-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Lightbox Modal -->
+  <div class="lightbox-backdrop hidden" id="lightbox-backdrop" role="dialog" aria-label="View photo">
+    <div class="lightbox-content">
+      <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Close image">×</button>
+      <img id="lightbox-image" src="" alt="Full view attachment">
+    </div>
+  </div>
+</body>
+</html>
