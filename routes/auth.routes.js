@@ -28,6 +28,10 @@ router.post('/register', async (req, res, next) => {
     const username = String(req.body.username || '').trim();
     const displayName = String(req.body.display_name || username).trim();
     const password = String(req.body.password || '');
+    const confirmPassword = req.body.confirm_password !== undefined ? String(req.body.confirm_password) : null;
+    if (confirmPassword !== null && password !== confirmPassword) {
+      return res.status(400).json({ error: 'Passwords do not match.' });
+    }
     if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
       return res.status(400).json({ error: 'Username must be 3–24 characters using letters, numbers, or underscores.' });
     }

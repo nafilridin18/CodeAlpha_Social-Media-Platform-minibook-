@@ -1,3 +1,83 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Join Minibook</title><script src="/js/theme.js"></script><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/theme.css"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/ui.js"></script></head>
-<body><header id="navbar"></header><main class="auth-wrap"><form id="register-form" class="panel auth-card"><p class="eyebrow">MAKE YOURSELF AT HOME</p><h1>Create an account</h1><label>Username<input name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+" required></label><label>Display name<input name="display_name" maxlength="60" required></label><label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><button class="button full" type="submit">Join Minibook</button><p class="message" aria-live="polite"></p><p>Already have an account? <a class="text-link" data-login-link href="/login.html">Log in</a></p></form></main></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Join Minibook</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/ui.js"></script>
+</head>
+<body>
+  <header id="navbar"></header>
+  <main class="auth-wrap">
+    <form id="register-form" class="panel auth-card">
+      <p class="eyebrow">MAKE YOURSELF AT HOME</p>
+      <h1>Create an account</h1>
+
+      <label>
+        Username
+        <input
+          name="username"
+          autocomplete="username"
+          minlength="3"
+          maxlength="24"
+          pattern="[A-Za-z0-9_]{3,24}"
+          title="3 to 24 characters: letters, numbers, and underscores (_) only. No spaces or @ symbols."
+          placeholder="e.g. ridin18 or ridin_18"
+          required
+        >
+        <span class="field-hint">3–24 characters: only letters, numbers, and underscores (<code>_</code>). No spaces or <code>@</code>.</span>
+      </label>
+
+      <label>
+        Display name
+        <input
+          name="display_name"
+          maxlength="60"
+          placeholder="e.g. Ridin"
+          required
+        >
+        <span class="field-hint">Your public display name visible on your profile and posts.</span>
+      </label>
+
+      <label>
+        Password
+        <input
+          id="register-password"
+          name="password"
+          type="password"
+          autocomplete="new-password"
+          minlength="8"
+          maxlength="128"
+          placeholder="At least 8 characters"
+          required
+        >
+        <span class="field-hint">Must be 8 to 128 characters long.</span>
+      </label>
+
+      <label>
+        Confirm password
+        <input
+          id="register-confirm-password"
+          name="confirm_password"
+          type="password"
+          autocomplete="new-password"
+          minlength="8"
+          maxlength="128"
+          placeholder="Re-enter your password"
+          required
+        >
+        <span class="field-hint" id="password-match-hint">Please re-enter your password to confirm.</span>
+      </label>
+
+      <button class="button full" type="submit">Join Minibook</button>
+      <p class="message" aria-live="polite"></p>
+      <p>Already have an account? <a class="text-link" data-login-link href="/login.html">Log in</a></p>
+    </form>
+  </main>
+</body>
+</html>

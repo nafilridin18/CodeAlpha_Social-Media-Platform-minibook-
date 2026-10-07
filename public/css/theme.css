@@ -2463,3 +2463,32 @@ body.has-bottom-nav {
   }
 }
 
+/* Form field hints and validation */
+.field-hint {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-top: 3px;
+}
+
+.field-hint code {
+  font-family: inherit;
+  font-weight: 600;
+  background: var(--peach-soft);
+  color: var(--brown);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.field-hint-error {
+  color: #c24034 !important;
+  font-weight: 600;
+}
+
+.field-hint-success {
+  color: #2e7962 !important;
+  font-weight: 600;
+}
+
